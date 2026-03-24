@@ -30,7 +30,7 @@
     }
 
     body.day {
-      background: #87CEEB;
+      background: linear-gradient(to bottom, #87CEEB 0%, #b8e0f7 50%, #d4eef9 100%);
     }
 
     /* ============================================
@@ -47,15 +47,22 @@
       height: 1px;
       background: transparent;
       box-shadow:
-        120px 40px 0 1px #fff, 250px 80px 0 1px #fff, 400px 30px 0 1px #fff,
-        550px 60px 0 1px #fff, 700px 20px 0 1px #fff, 850px 90px 0 1px #fff,
-        980px 50px 0 1px #fff, 60px 150px 0 1px #fff, 200px 130px 0 1px #fff,
-        370px 170px 0 1px #fff, 500px 110px 0 1px #fff, 640px 155px 0 1px #fff,
-        790px 140px 0 1px #fff, 900px 120px 0 1px #fff, 1050px 70px 0 1px #fff,
-        1150px 40px 0 1px #fff, 1250px 100px 0 1px #fff, 1350px 55px 0 1px #fff,
-        180px 200px 0 1px #ddd, 450px 220px 0 1px #ddd, 750px 210px 0 1px #ddd,
-        30px 280px 0 1px #ddd, 320px 260px 0 1px #ddd, 600px 290px 0 1px #ddd,
-        880px 270px 0 1px #ddd, 1100px 240px 0 1px #ddd;
+        /* top band */
+        120px  40px 0 1px #fff,  250px  80px 0 1px #fff,  400px  30px 0 1px #fff,
+        550px  60px 0 1px #fff,  700px  20px 0 1px #fff,  850px  90px 0 1px #fff,
+        980px  50px 0 1px #fff, 1150px  40px 0 1px #fff, 1300px  70px 0 1px #fff,
+        1450px 30px 0 1px #fff,   60px 100px 0 1px #fff,  200px 130px 0 1px #fff,
+        /* middle band */
+        370px 200px 0 1px #fff,  500px 170px 0 1px #fff,  640px 220px 0 1px #fff,
+        790px 190px 0 1px #fff,  900px 240px 0 1px #fff, 1050px 180px 0 1px #fff,
+        1200px 210px 0 1px #fff, 1380px 230px 0 1px #fff,  30px 250px 0 1px #ddd,
+        /* lower band */
+        180px 320px 0 1px #ddd,  450px 350px 0 1px #ddd,  750px 380px 0 1px #ddd,
+        320px 400px 0 1px #ddd,  600px 430px 0 1px #ddd,  880px 360px 0 1px #ddd,
+        1100px 400px 0 1px #ddd, 1300px 340px 0 1px #ddd,  100px 450px 0 1px #ddd,
+        /* bottom band */
+        500px 500px 0 1px #aaa,  800px 520px 0 1px #aaa, 1100px 480px 0 1px #aaa,
+        250px 560px 0 1px #aaa,  700px 570px 0 1px #aaa, 1300px 540px 0 1px #aaa;
       /* Twinkling: opacity flickers between 0.4 and 1 */
       animation: twinkle 3s ease-in-out infinite alternate;
       transition: opacity 0.8s;
@@ -69,11 +76,16 @@
       height: 1px;
       background: transparent;
       box-shadow:
-        80px 70px 0 1px #aaf,  310px 45px 0 1px #ccf,  460px 95px 0 1px #aaf,
-        620px 35px 0 1px #fff, 740px 120px 0 1px #ccf, 930px 65px 0 1px #aaf,
-        1020px 30px 0 1px #fff, 1180px 80px 0 1px #ccf, 1300px 110px 0 1px #aaf,
-        170px 160px 0 1px #ccf, 430px 185px 0 1px #fff, 680px 175px 0 1px #aaf,
-        820px 200px 0 1px #ccf, 1060px 155px 0 1px #fff, 1220px 140px 0 1px #aaf;
+        /* top band */
+         80px  70px 0 1px #aaf,  310px  45px 0 1px #ccf,  460px  95px 0 1px #aaf,
+        620px  35px 0 1px #fff,  740px 120px 0 1px #ccf,  930px  65px 0 1px #aaf,
+       1020px  30px 0 1px #fff, 1180px  80px 0 1px #ccf, 1400px  55px 0 1px #aaf,
+        /* middle band */
+        170px 260px 0 1px #ccf,  430px 285px 0 1px #fff,  680px 275px 0 1px #aaf,
+        820px 300px 0 1px #ccf, 1060px 255px 0 1px #fff, 1220px 240px 0 1px #aaf,
+        /* lower band */
+        350px 420px 0 1px #ccf,  600px 460px 0 1px #aaf,  950px 440px 0 1px #ccf,
+       1150px 470px 0 1px #fff,   150px 490px 0 1px #aaf, 1350px 410px 0 1px #ccf;
       animation: twinkle 4.5s ease-in-out infinite alternate-reverse;
       transition: opacity 0.8s;
     }
@@ -190,12 +202,6 @@
       cursor: crosshair;
     }
 
-    /* "Fleeing" state — bat speeds up when mouse is near.
-       We boost animation-duration (shorter = faster).
-       Applied via JS when mouse proximity detected. */
-    .bat.fleeing {
-      animation-duration: 0.4s, 4s, 1.5s;
-    }
 
 
     /* ============================================
@@ -402,31 +408,6 @@
 
 
 
-    /* ================================================
-       FLEE FROM MOUSE
-       On every mousemove, check distance from cursor
-       to each bat's bounding rect center. If within
-       120px, add .fleeing; otherwise remove it.
-    ================================================ */
-    document.addEventListener('mousemove', (e) => {
-      const mx = e.clientX;
-      const my = e.clientY;
-
-      document.querySelectorAll('.bat').forEach((bat) => {
-        const rect = bat.getBoundingClientRect();
-        // Center of the bat's rendered area
-        // (bat is 1px but scaled, so rect gives the true visual bounds)
-        const cx = rect.left + rect.width  / 2;
-        const cy = rect.top  + rect.height / 2;
-        const dist = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
-
-        if (dist < 120) {
-          bat.classList.add('fleeing');
-        } else {
-          bat.classList.remove('fleeing');
-        }
-      });
-    });
 
   </script>
 
