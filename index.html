@@ -420,10 +420,6 @@
       animation-duration: 0.4s, 4s, 1.5s;
     }
 
-    /* Caught flash: brief highlight when scored */
-    .bat.caught {
-      filter: drop-shadow(0 0 20px rgba(255, 255, 100, 1)) brightness(2) !important;
-    }
 
     /* ============================================
        NTH-CHILD BAT POSITIONS
@@ -504,26 +500,6 @@
 
     /* ============================================
        SCORE COUNTER
-       Shows "Bats Caught: N" top-left of screen
-    ============================================ */
-    .score {
-      position: fixed;
-      top: 20px;
-      left: 24px;
-      color: rgba(255, 220, 255, 0.85);
-      font-family: 'Courier New', monospace;
-      font-size: 16px;
-      letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(200, 150, 255, 0.6);
-      pointer-events: none;
-      transition: color 0.8s, text-shadow 0.8s;
-      z-index: 100;
-    }
-
-    body.day .score {
-      color: rgba(40, 20, 60, 0.75);
-      text-shadow: none;
-    }
 
     /* ============================================
        HINT TEXT
@@ -641,20 +617,17 @@
   <div class="bat"></div>
 
   <!-- Score counter (top-left) -->
-  <p class="score" id="score">Bats Caught: 0</p>
 
   <!-- Day/Night toggle button (top-right) -->
   <button id="toggleBtn" title="Toggle day/night">🌙</button>
 
   <!-- Hint text (bottom-center) -->
-  <p class="hint">click a bat to catch it &nbsp;·&nbsp; 🌙 button to toggle day / night</p>
+  <p class="hint">🌙 button to toggle day / night</p>
 
   <script>
     /* ================================================
        STATE
     ================================================ */
-    let batsCaught = 0;
-    const scoreEl = document.getElementById('score');
 
     /* ================================================
        DAY / NIGHT — dedicated button only
@@ -667,39 +640,6 @@
     });
 
 
-    /* ================================================
-       BAT INTERACTION: CATCH + FLEE
-       For each bat (static and spawned):
-         - Click: increment score, flash animation
-         - Mouse proximity: add .fleeing class so the
-           bat speeds up via its animation-duration override
-    ================================================ */
-
-    /* ================================================
-       CATCH BAT ON CLICK
-       Since box-shadow has no hit area, we listen on
-       body and check if the click is within any bat's
-       visual bounds (rect + padding for box-shadow).
-    ================================================ */
-    document.body.addEventListener('click', (e) => {
-      const bats = document.querySelectorAll('.bat');
-      for (const bat of bats) {
-        const rect = bat.getBoundingClientRect();
-        const pad = 100; // extra padding to cover box-shadow visual area
-        if (
-          e.clientX >= rect.left - pad &&
-          e.clientX <= rect.right  + pad &&
-          e.clientY >= rect.top  - pad &&
-          e.clientY <= rect.bottom + pad
-        ) {
-          batsCaught++;
-          scoreEl.textContent = 'Bats Caught: ' + batsCaught;
-          bat.classList.add('caught');
-          setTimeout(() => bat.classList.remove('caught'), 300);
-          break; // catch only one bat per click
-        }
-      }
-    });
 
     /* ================================================
        FLEE FROM MOUSE
