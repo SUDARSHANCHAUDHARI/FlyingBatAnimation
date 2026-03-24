@@ -132,23 +132,50 @@
               animation: 0.4s bat steps(1) infinite, fly 12s linear infinite;
     }
 
+    /* tops kept between 20vh–70vh so bats stay off the edges */
     .bat:nth-child(1) {
-      top: 25vh;
+      top: 22vh;
       animation-delay: 0s, 0s;
       transform: scale(4);
     }
 
     .bat:nth-child(2) {
-      top: 45vh;
-      animation-delay: 0.1s, -5s;
+      top: 38vh;
+      animation-delay: 0.1s, -4s;
       transform: scale(3);
       filter: brightness(1.4);
     }
 
     .bat:nth-child(3) {
-      top: 15vh;
-      animation-delay: 0.2s, -9s;
+      top: 55vh;
+      animation-delay: 0.2s, -8s;
       transform: scale(2.5);
+    }
+
+    .bat:nth-child(4) {
+      top: 30vh;
+      animation-delay: 0.15s, -2s;
+      transform: scale(3.5);
+    }
+
+    .bat:nth-child(5) {
+      top: 65vh;
+      animation-delay: 0.05s, -10s;
+      transform: scale(2);
+      filter: brightness(0.8);
+    }
+
+    .bat:nth-child(6) {
+      top: 45vh;
+      animation-delay: 0.3s, -6s;
+      transform: scale(4.5);
+    }
+
+    .bat:nth-child(7) {
+      top: 20vh;
+      animation-delay: 0.25s, -3s;
+      transform: scale(2.2);
+      filter: brightness(1.2);
     }
 
     @keyframes fly {
@@ -194,6 +221,10 @@
   <div class="stars"></div>
   <div class="moon"></div>
 
+  <div class="bat"></div>
+  <div class="bat"></div>
+  <div class="bat"></div>
+  <div class="bat"></div>
   <div class="bat"></div>
   <div class="bat"></div>
   <div class="bat"></div>
