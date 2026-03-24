@@ -17,14 +17,15 @@
     }
 
     /* ============================================
-       PAGE — Night sky
+       PAGE — Night sky background
+       Clicking the body (not a bat) toggles day/night
     ============================================ */
     body {
       background: #0a0a1a;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
-      cursor: pointer;
+      cursor: crosshair;
       transition: background 0.8s;
     }
 
@@ -33,27 +34,11 @@
     }
 
     /* ============================================
-       MOON
-    ============================================ */
-    .moon {
-      position: absolute;
-      top: 60px;
-      right: 120px;
-      width: 80px;
-      height: 80px;
-      background: #fffde7;
-      border-radius: 50%;
-      box-shadow: 0 0 30px 10px rgba(255, 253, 200, 0.4);
-      transition: opacity 0.8s;
-    }
-
-    body.day .moon {
-      opacity: 0;
-    }
-
-    /* ============================================
        STARS
-       box-shadow starfield on a tiny div
+       box-shadow starfield on a tiny 1x1 div.
+       Two layers: .stars (large set) and .stars2
+       (second layer at different opacity for depth).
+       Both twinkle via CSS animation.
     ============================================ */
     .stars {
       position: absolute;
@@ -71,31 +56,306 @@
         180px 200px 0 1px #ddd, 450px 220px 0 1px #ddd, 750px 210px 0 1px #ddd,
         30px 280px 0 1px #ddd, 320px 260px 0 1px #ddd, 600px 290px 0 1px #ddd,
         880px 270px 0 1px #ddd, 1100px 240px 0 1px #ddd;
+      /* Twinkling: opacity flickers between 0.4 and 1 */
+      animation: twinkle 3s ease-in-out infinite alternate;
       transition: opacity 0.8s;
     }
 
-    body.day .stars {
+    /* Second star layer offset in time for an out-of-phase twinkle */
+    .stars2 {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1px;
+      height: 1px;
+      background: transparent;
+      box-shadow:
+        80px 70px 0 1px #aaf,  310px 45px 0 1px #ccf,  460px 95px 0 1px #aaf,
+        620px 35px 0 1px #fff, 740px 120px 0 1px #ccf, 930px 65px 0 1px #aaf,
+        1020px 30px 0 1px #fff, 1180px 80px 0 1px #ccf, 1300px 110px 0 1px #aaf,
+        170px 160px 0 1px #ccf, 430px 185px 0 1px #fff, 680px 175px 0 1px #aaf,
+        820px 200px 0 1px #ccf, 1060px 155px 0 1px #fff, 1220px 140px 0 1px #aaf;
+      animation: twinkle 4.5s ease-in-out infinite alternate-reverse;
+      transition: opacity 0.8s;
+    }
+
+    body.day .stars,
+    body.day .stars2 {
       opacity: 0;
     }
 
-    /* ============================================
-       HINT TEXT
-    ============================================ */
-    .hint {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.35);
-      font-family: sans-serif;
-      font-size: 13px;
-      letter-spacing: 1px;
-      pointer-events: none;
-      transition: color 0.8s;
+    @keyframes twinkle {
+      0%   { opacity: 0.4; }
+      40%  { opacity: 1;   }
+      60%  { opacity: 0.6; }
+      100% { opacity: 0.9; }
     }
 
-    body.day .hint {
-      color: rgba(0,0,0,0.25);
+    /* ============================================
+       MOON
+       Drifts slowly across the top of the sky
+       and flickers subtly like a candle/lantern.
+    ============================================ */
+    .moon {
+      position: absolute;
+      top: 60px;
+      width: 80px;
+      height: 80px;
+      background: #fffde7;
+      border-radius: 50%;
+      /* Base glow + flicker layered together */
+      box-shadow:
+        0 0 30px 10px rgba(255, 253, 200, 0.4),
+        0 0 60px 20px rgba(255, 245, 150, 0.15);
+      /* moonDrift moves it right-to-left; moonFlicker pulses glow */
+      animation: moonDrift 120s linear infinite, moonFlicker 4s ease-in-out infinite;
+      transition: opacity 0.8s;
+    }
+
+    body.day .moon {
+      opacity: 0;
+    }
+
+    /* Moon slowly drifts from right side to left over 120 seconds */
+    @keyframes moonDrift {
+      0%   { left: 80vw; }
+      100% { left: -150px; }
+    }
+
+    /* Candle-like flicker: subtle glow intensity variation */
+    @keyframes moonFlicker {
+      0%   { box-shadow: 0 0 30px 10px rgba(255,253,200,0.40), 0 0 60px 20px rgba(255,245,150,0.15); }
+      20%  { box-shadow: 0 0 40px 15px rgba(255,253,200,0.55), 0 0 80px 30px rgba(255,245,150,0.22); }
+      35%  { box-shadow: 0 0 25px  8px rgba(255,253,200,0.35), 0 0 50px 18px rgba(255,245,150,0.12); }
+      55%  { box-shadow: 0 0 45px 18px rgba(255,253,200,0.60), 0 0 90px 35px rgba(255,245,150,0.25); }
+      70%  { box-shadow: 0 0 28px  9px rgba(255,253,200,0.38), 0 0 55px 20px rgba(255,245,150,0.14); }
+      85%  { box-shadow: 0 0 38px 13px rgba(255,253,200,0.50), 0 0 70px 26px rgba(255,245,150,0.20); }
+      100% { box-shadow: 0 0 30px 10px rgba(255,253,200,0.40), 0 0 60px 20px rgba(255,245,150,0.15); }
+    }
+
+    /* ============================================
+       CLOUDS
+       3 CSS cloud shapes built from rounded divs
+       and box-shadow puffs, slowly drifting across.
+    ============================================ */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50px;
+      /* Clouds drift right-to-left */
+      animation: cloudDrift linear infinite;
+      transition: opacity 0.8s;
+      pointer-events: none;
+    }
+
+    /* Puffs are pseudo-elements on each cloud */
+    .cloud::before,
+    .cloud::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .cloud:nth-child(1) {
+      width: 120px; height: 30px;
+      top: 12vh;
+      animation-duration: 80s;
+      animation-delay: -10s;
+    }
+    .cloud:nth-child(1)::before {
+      width: 70px; height: 50px;
+      top: -25px; left: 15px;
+    }
+    .cloud:nth-child(1)::after {
+      width: 50px; height: 40px;
+      top: -18px; left: 55px;
+    }
+
+    .cloud:nth-child(2) {
+      width: 100px; height: 25px;
+      top: 22vh;
+      animation-duration: 110s;
+      animation-delay: -40s;
+    }
+    .cloud:nth-child(2)::before {
+      width: 60px; height: 45px;
+      top: -22px; left: 12px;
+    }
+    .cloud:nth-child(2)::after {
+      width: 45px; height: 35px;
+      top: -14px; left: 48px;
+    }
+
+    .cloud:nth-child(3) {
+      width: 140px; height: 35px;
+      top: 8vh;
+      animation-duration: 95s;
+      animation-delay: -60s;
+    }
+    .cloud:nth-child(3)::before {
+      width: 80px; height: 55px;
+      top: -28px; left: 20px;
+    }
+    .cloud:nth-child(3)::after {
+      width: 55px; height: 42px;
+      top: -20px; left: 68px;
+    }
+
+    /* In day mode, clouds become white and more visible */
+    body.day .cloud,
+    body.day .cloud::before,
+    body.day .cloud::after {
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    @keyframes cloudDrift {
+      0%   { left: 110vw; }
+      100% { left: -300px; }
+    }
+
+    /* ============================================
+       CASTLE / TREELINE SILHOUETTE
+       Pure CSS box-shadow landscape at the bottom.
+       Uses a series of divs to form castle towers
+       and spiky tree outlines.
+    ============================================ */
+    .landscape {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      pointer-events: none;
+      transition: opacity 0.8s;
+    }
+
+    /* The silhouette is drawn via box-shadow on .landscape::before.
+       Each shadow entry is a solid rectangle block that forms a tower,
+       battlement, or tree spike. All are dark near-black (#0d0d18). */
+    .landscape::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      background: #0d0d18;
+      /* Castle towers + battlements + treeline silhouette */
+      box-shadow:
+        /* --- Left treeline --- */
+        0px    -60px  0 20px #0d0d18,
+        45px   -80px  0 15px #0d0d18,
+        80px   -55px  0 18px #0d0d18,
+        120px  -95px  0 12px #0d0d18,
+        155px  -65px  0 20px #0d0d18,
+        190px  -110px 0 10px #0d0d18,
+        220px  -75px  0 15px #0d0d18,
+        255px  -90px  0 12px #0d0d18,
+
+        /* --- Castle left wing --- */
+        300px  -120px 0 28px #0d0d18,
+        302px  -145px 0  6px #0d0d18,
+        320px  -150px 0  6px #0d0d18,
+        338px  -145px 0  6px #0d0d18,
+        356px  -150px 0  6px #0d0d18,
+        374px  -145px 0  6px #0d0d18,
+        /* left tower wall fill */
+        336px  -135px 0 20px #0d0d18,
+
+        /* --- Castle gate arch (center) --- */
+        450px  -180px 0 40px #0d0d18,
+        452px  -220px 0  8px #0d0d18,
+        476px  -228px 0  8px #0d0d18,
+        500px  -220px 0  8px #0d0d18,
+        524px  -228px 0  8px #0d0d18,
+        548px  -220px 0  8px #0d0d18,
+        /* tall center tower body */
+        490px  -200px 0 55px #0d0d18,
+
+        /* --- Castle right wing --- */
+        620px  -120px 0 28px #0d0d18,
+        622px  -145px 0  6px #0d0d18,
+        640px  -150px 0  6px #0d0d18,
+        658px  -145px 0  6px #0d0d18,
+        676px  -150px 0  6px #0d0d18,
+        694px  -145px 0  6px #0d0d18,
+        /* right tower wall fill */
+        656px  -135px 0 20px #0d0d18,
+
+        /* --- Right treeline --- */
+        740px  -90px  0 12px #0d0d18,
+        780px  -70px  0 18px #0d0d18,
+        820px  -100px 0 10px #0d0d18,
+        860px  -75px  0 16px #0d0d18,
+        900px  -85px  0 14px #0d0d18,
+        940px  -60px  0 20px #0d0d18,
+        980px  -95px  0 12px #0d0d18,
+        1020px -70px  0 18px #0d0d18,
+        1060px -55px  0 20px #0d0d18,
+        1100px -80px  0 15px #0d0d18,
+        1140px -65px  0 18px #0d0d18,
+        1180px -90px  0 12px #0d0d18,
+        1220px -70px  0 16px #0d0d18,
+        1260px -60px  0 20px #0d0d18,
+        1300px -85px  0 14px #0d0d18,
+        1340px -75px  0 17px #0d0d18,
+        1380px -55px  0 19px #0d0d18,
+        1420px -80px  0 13px #0d0d18,
+        1460px -65px  0 18px #0d0d18;
+    }
+
+    /* In day mode fade the silhouette to be a softer dark */
+    body.day .landscape::before {
+      background: #2a1a0a;
+      box-shadow:
+        0px    -60px  0 20px #2a2010,
+        45px   -80px  0 15px #2a2010,
+        80px   -55px  0 18px #2a2010,
+        120px  -95px  0 12px #2a2010,
+        155px  -65px  0 20px #2a2010,
+        190px  -110px 0 10px #2a2010,
+        220px  -75px  0 15px #2a2010,
+        255px  -90px  0 12px #2a2010,
+        300px  -120px 0 28px #2a2010,
+        302px  -145px 0  6px #2a2010,
+        320px  -150px 0  6px #2a2010,
+        338px  -145px 0  6px #2a2010,
+        356px  -150px 0  6px #2a2010,
+        374px  -145px 0  6px #2a2010,
+        336px  -135px 0 20px #2a2010,
+        450px  -180px 0 40px #2a2010,
+        452px  -220px 0  8px #2a2010,
+        476px  -228px 0  8px #2a2010,
+        500px  -220px 0  8px #2a2010,
+        524px  -228px 0  8px #2a2010,
+        548px  -220px 0  8px #2a2010,
+        490px  -200px 0 55px #2a2010,
+        620px  -120px 0 28px #2a2010,
+        622px  -145px 0  6px #2a2010,
+        640px  -150px 0  6px #2a2010,
+        658px  -145px 0  6px #2a2010,
+        676px  -150px 0  6px #2a2010,
+        694px  -145px 0  6px #2a2010,
+        656px  -135px 0 20px #2a2010,
+        740px  -90px  0 12px #2a2010,
+        780px  -70px  0 18px #2a2010,
+        820px  -100px 0 10px #2a2010,
+        860px  -75px  0 16px #2a2010,
+        900px  -85px  0 14px #2a2010,
+        940px  -60px  0 20px #2a2010,
+        980px  -95px  0 12px #2a2010,
+        1020px -70px  0 18px #2a2010,
+        1060px -55px  0 20px #2a2010,
+        1100px -80px  0 15px #2a2010,
+        1140px -65px  0 18px #2a2010,
+        1180px -90px  0 12px #2a2010,
+        1220px -70px  0 16px #2a2010,
+        1260px -60px  0 20px #2a2010,
+        1300px -85px  0 14px #2a2010,
+        1340px -75px  0 17px #2a2010,
+        1380px -55px  0 19px #2a2010,
+        1420px -80px  0 13px #2a2010,
+        1460px -65px  0 18px #2a2010;
     }
 
     /* ============================================
@@ -115,11 +375,13 @@
           up 4x — so each 1px dot becomes a 4x4 block,
           giving it the chunky pixel-art look.
 
-       4. position: relative with left/top: -128px
-          re-centers the bat after scaling, since
-          scale(4) on a 1px element offsets it.
+       4. position: absolute with left animating from
+          right to left gives the horizontal fly.
 
-       5. The animation swaps box-shadow between
+       5. The sineWave animation adds vertical bobbing
+          (translateY) for a realistic wavy flight path.
+
+       6. The bat animation swaps box-shadow between
           two frames (wings up / wings down) using
           steps(1) — which snaps instantly with no
           easing, giving the retro sprite-flip feel.
@@ -128,54 +390,161 @@
       width: 1px;
       height: 1px;
       position: absolute;
-      -webkit-animation: 0.4s bat steps(1) infinite, fly 12s linear infinite;
-              animation: 0.4s bat steps(1) infinite, fly 12s linear infinite;
+      cursor: pointer;
+      /* bat = wing-flap sprite, fly = horizontal movement, sineWave = wavy path */
+      animation: 0.4s bat steps(1) infinite,
+                 fly 12s linear infinite,
+                 sineWave 3s ease-in-out infinite;
+      /* Night glow: subtle purple-white aura */
+      box-shadow: none;
+      transition: box-shadow 0.3s;
     }
 
-    /* nth-child offset by 2 because .stars and .moon are children 1 and 2 of body */
-    /* spread across 15vh–78vh to scatter bats across the full screen */
-    .bat:nth-child(3) {
+    /* Night-mode glow — applied to all .bat elements when body is NOT .day.
+       The glow is on the bat's outer shell via filter, but since bat uses
+       box-shadow for its pixels, we use a filter drop-shadow instead. */
+    body:not(.day) .bat {
+      filter: drop-shadow(0 0 6px rgba(200, 180, 255, 0.5));
+    }
+
+    /* Hover: brighter glow on mouse-over */
+    .bat:hover {
+      filter: drop-shadow(0 0 14px rgba(255, 220, 255, 0.9)) brightness(1.3) !important;
+      cursor: crosshair;
+    }
+
+    /* "Fleeing" state — bat speeds up when mouse is near.
+       We boost animation-duration (shorter = faster).
+       Applied via JS when mouse proximity detected. */
+    .bat.fleeing {
+      animation-duration: 0.4s, 4s, 1.5s;
+    }
+
+    /* Caught flash: brief highlight when scored */
+    .bat.caught {
+      filter: drop-shadow(0 0 20px rgba(255, 255, 100, 1)) brightness(2) !important;
+    }
+
+    /* ============================================
+       NTH-CHILD BAT POSITIONS
+       Offset by the count of non-bat elements that
+       come before bats in the DOM:
+         1: .stars
+         2: .stars2
+         3: .moon
+         4: .cloud (1st)
+         5: .cloud (2nd)
+         6: .cloud (3rd)
+         7: .landscape
+         So bats start at nth-child(8)
+    ============================================ */
+    .bat:nth-child(8) {
       top: 18vh;
-      animation-delay: 0s, 0s;
+      animation-delay: 0s, 0s, 0s;
       transform: scale(4);
     }
 
-    .bat:nth-child(4) {
+    .bat:nth-child(9) {
       top: 62vh;
-      animation-delay: 0.1s, -4s;
+      animation-delay: 0.1s, -4s, -0.8s;
       transform: scale(3);
       filter: brightness(1.4);
     }
 
-    .bat:nth-child(5) {
+    .bat:nth-child(10) {
       top: 35vh;
-      animation-delay: 0.2s, -8s;
+      animation-delay: 0.2s, -8s, -1.5s;
       transform: scale(2.5);
     }
 
-    .bat:nth-child(6) {
+    .bat:nth-child(11) {
       top: 75vh;
-      animation-delay: 0.15s, -2s;
+      animation-delay: 0.15s, -2s, -2.2s;
       transform: scale(3.5);
     }
 
-    .bat:nth-child(7) {
+    .bat:nth-child(12) {
       top: 48vh;
-      animation-delay: 0.05s, -10s;
+      animation-delay: 0.05s, -10s, -0.5s;
       transform: scale(2);
       filter: brightness(0.8);
     }
 
-    .bat:nth-child(8) {
+    .bat:nth-child(13) {
       top: 25vh;
-      animation-delay: 0.3s, -6s;
+      animation-delay: 0.3s, -6s, -1.0s;
       transform: scale(4.5);
     }
 
+    /* ============================================
+       SINE WAVE FLIGHT PATH
+       Bats bob up and down while flying horizontally.
+       The translateY shifts combine with scale(N)
+       to produce a smooth wave. We use a separate
+       wrapper approach: the bat div itself has the
+       sineWave animation on translateY, while the
+       horizontal fly animation moves left.
+       Both run simultaneously on the same element.
+    ============================================ */
+    @keyframes sineWave {
+      0%   { margin-top:  0px; }
+      25%  { margin-top: -30px; }
+      50%  { margin-top:  0px; }
+      75%  { margin-top:  30px; }
+      100% { margin-top:  0px; }
+    }
 
+    /* ============================================
+       HORIZONTAL FLY — right to left
+    ============================================ */
     @keyframes fly {
       0%   { left: calc(100vw + 200px); }
       100% { left: -200px; }
+    }
+
+    /* ============================================
+       SCORE COUNTER
+       Shows "Bats Caught: N" top-left of screen
+    ============================================ */
+    .score {
+      position: fixed;
+      top: 20px;
+      left: 24px;
+      color: rgba(255, 220, 255, 0.85);
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(200, 150, 255, 0.6);
+      pointer-events: none;
+      transition: color 0.8s, text-shadow 0.8s;
+      z-index: 100;
+    }
+
+    body.day .score {
+      color: rgba(40, 20, 60, 0.75);
+      text-shadow: none;
+    }
+
+    /* ============================================
+       HINT TEXT
+    ============================================ */
+    .hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.35);
+      font-family: sans-serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      pointer-events: none;
+      transition: color 0.8s;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    body.day .hint {
+      color: rgba(0,0,0,0.25);
     }
 
     /* ============================================
@@ -213,9 +582,27 @@
 </head>
 <body>
 
+  <!-- Twinkling starfields (two layers for depth) -->
   <div class="stars"></div>
+  <div class="stars2"></div>
+
+  <!-- Moon: drifts slowly with candle-like flicker -->
   <div class="moon"></div>
 
+  <!-- Drifting clouds (3 shapes) -->
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+
+  <!-- Castle / treeline silhouette at bottom -->
+  <div class="landscape"></div>
+
+  <!--
+    Static bats — nth-child(8) through nth-child(13)
+    because 7 non-bat elements precede them:
+      1: .stars, 2: .stars2, 3: .moon,
+      4-6: .cloud x3, 7: .landscape
+  -->
   <div class="bat"></div>
   <div class="bat"></div>
   <div class="bat"></div>
@@ -223,12 +610,127 @@
   <div class="bat"></div>
   <div class="bat"></div>
 
-  <p class="hint">click to toggle day / night</p>
+  <!-- Score counter (top-left) -->
+  <p class="score" id="score">Bats Caught: 0</p>
+
+  <!-- Hint text (bottom-center) -->
+  <p class="hint">click sky to toggle day/night &nbsp;·&nbsp; click bat to catch &nbsp;·&nbsp; click empty space to spawn</p>
 
   <script>
-    document.body.addEventListener('click', () => {
-      document.body.classList.toggle('day');
+    /* ================================================
+       STATE
+    ================================================ */
+    let batsCaught = 0;
+    const scoreEl = document.getElementById('score');
+
+    /* ================================================
+       DAY / NIGHT TOGGLE
+       Only fires when clicking directly on body,
+       NOT when clicking on a bat or other element.
+    ================================================ */
+    document.body.addEventListener('click', (e) => {
+      // Only toggle if click target is body itself (empty sky)
+      if (e.target === document.body) {
+        document.body.classList.toggle('day');
+      }
     });
+
+    /* ================================================
+       SPAWN BAT ON CLICK (empty sky)
+       When clicking empty space (body background),
+       also spawn a new bat at the clicked Y position.
+    ================================================ */
+    document.body.addEventListener('click', (e) => {
+      if (e.target !== document.body) return;
+
+      const bat = document.createElement('div');
+      bat.classList.add('bat');
+
+      // Place bat at the clicked Y, slightly offset so it
+      // appears to start at the right edge and fly left.
+      const scale = (2 + Math.random() * 2.5).toFixed(2);
+      const flyDuration = (8 + Math.random() * 8).toFixed(1);
+      const waveDuration = (2 + Math.random() * 2).toFixed(1);
+      const batDelay = (Math.random() * 0.3).toFixed(2);
+      const waveDelay = (Math.random() * waveDuration).toFixed(2);
+
+      bat.style.top = (e.clientY - 60) + 'px';
+      bat.style.transform = 'scale(' + scale + ')';
+      bat.style.animation =
+        batDelay + 's bat steps(1) infinite, ' +
+        flyDuration + 's fly linear 1, ' +
+        waveDuration + 's sineWave ease-in-out ' + waveDelay + 's infinite';
+
+      // Remove spawned bat after one crossing
+      bat.addEventListener('animationend', (ev) => {
+        if (ev.animationName === 'fly') {
+          bat.remove();
+        }
+      });
+
+      // Allow catching spawned bats too
+      attachBatListeners(bat);
+
+      document.body.appendChild(bat);
+    });
+
+    /* ================================================
+       BAT INTERACTION: CATCH + FLEE
+       For each bat (static and spawned):
+         - Click: increment score, flash animation
+         - Mouse proximity: add .fleeing class so the
+           bat speeds up via its animation-duration override
+    ================================================ */
+
+    /**
+     * Attach click-to-catch and hover-flee listeners to a bat element.
+     * @param {HTMLElement} bat
+     */
+    function attachBatListeners(bat) {
+
+      /* --- Click to catch --- */
+      bat.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent body click (day/night toggle or spawn)
+        batsCaught++;
+        scoreEl.textContent = 'Bats Caught: ' + batsCaught;
+
+        // Flash the bat yellow
+        bat.classList.add('caught');
+        setTimeout(() => bat.classList.remove('caught'), 300);
+      });
+
+      /* --- Fleeing handled globally via mousemove, see below --- */
+    }
+
+    /* Attach listeners to all pre-existing bats */
+    document.querySelectorAll('.bat').forEach(attachBatListeners);
+
+    /* ================================================
+       FLEE FROM MOUSE
+       On every mousemove, check distance from cursor
+       to each bat's bounding rect center. If within
+       120px, add .fleeing; otherwise remove it.
+    ================================================ */
+    document.addEventListener('mousemove', (e) => {
+      const mx = e.clientX;
+      const my = e.clientY;
+
+      document.querySelectorAll('.bat').forEach((bat) => {
+        const rect = bat.getBoundingClientRect();
+        // Center of the bat's rendered area
+        // (bat is 1px but scaled, so rect gives the true visual bounds)
+        const cx = rect.left + rect.width  / 2;
+        const cy = rect.top  + rect.height / 2;
+        const dist = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
+
+        if (dist < 120) {
+          bat.classList.add('fleeing');
+        } else {
+          bat.classList.remove('fleeing');
+        }
+      });
+    });
+
   </script>
 
 </body>
