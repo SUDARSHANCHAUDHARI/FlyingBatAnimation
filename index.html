@@ -547,6 +547,36 @@
       color: rgba(0,0,0,0.25);
     }
 
+    /* Day/Night toggle button */
+    #toggleBtn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 200;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 22px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.3s, border 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #toggleBtn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    body.day #toggleBtn {
+      background: rgba(0,0,0,0.1);
+      border-color: rgba(0,0,0,0.2);
+      color: #333;
+    }
+
     /* ============================================
        KEYFRAMES
        Two frames define the wing flap animation.
@@ -613,8 +643,11 @@
   <!-- Score counter (top-left) -->
   <p class="score" id="score">Bats Caught: 0</p>
 
+  <!-- Day/Night toggle button (top-right) -->
+  <button id="toggleBtn" title="Toggle day/night">🌙</button>
+
   <!-- Hint text (bottom-center) -->
-  <p class="hint">click sky to toggle day/night &nbsp;·&nbsp; click bat to catch &nbsp;·&nbsp; click empty space to spawn</p>
+  <p class="hint">click sky to spawn bat &nbsp;·&nbsp; click bat to catch &nbsp;·&nbsp; 🌙 to toggle day/night</p>
 
   <script>
     /* ================================================
@@ -624,16 +657,19 @@
     const scoreEl = document.getElementById('score');
 
     /* ================================================
-       CLICK EMPTY SPACE → toggle day / night
-       DOUBLE-CLICK EMPTY SPACE → spawn a bat
+       DAY / NIGHT — dedicated button only
     ================================================ */
-    document.body.addEventListener('click', (e) => {
-      if (e.target === document.body) {
-        document.body.classList.toggle('day');
-      }
+    const toggleBtn = document.getElementById('toggleBtn');
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.body.classList.toggle('day');
+      toggleBtn.textContent = document.body.classList.contains('day') ? '🌙' : '☀️';
     });
 
-    document.body.addEventListener('dblclick', (e) => {
+    /* ================================================
+       CLICK EMPTY SKY → spawn a bat at that height
+    ================================================ */
+    document.body.addEventListener('click', (e) => {
       if (e.target !== document.body) return;
 
       const bat = document.createElement('div');
@@ -643,14 +679,13 @@
       const flyDuration = (8 + Math.random() * 8).toFixed(1);
       const waveDuration = (2 + Math.random() * 2).toFixed(1);
       const batDelay = (Math.random() * 0.3).toFixed(2);
-      const waveDelay = (Math.random() * waveDuration).toFixed(2);
 
       bat.style.top = (e.clientY - 60) + 'px';
       bat.style.transform = 'scale(' + scale + ')';
       bat.style.animation =
         batDelay + 's bat steps(1) infinite, ' +
         flyDuration + 's fly linear 1, ' +
-        waveDuration + 's sineWave ease-in-out ' + waveDelay + 's infinite';
+        waveDuration + 's sineWave ease-in-out infinite';
 
       bat.addEventListener('animationend', (ev) => {
         if (ev.animationName === 'fly') bat.remove();
