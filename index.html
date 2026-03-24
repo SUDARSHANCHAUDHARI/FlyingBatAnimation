@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bat Animation</title>
+  <title>Flying Bat Animation</title>
   <style>
 
     /* ============================================
@@ -17,17 +17,85 @@
     }
 
     /* ============================================
-       PAGE
-       Full viewport, grey background to match
-       the original Facebook post style
+       PAGE — Night sky
     ============================================ */
     body {
-      background: #d0ceca;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #0a0a1a;
+      overflow: hidden;
       width: 100vw;
       height: 100vh;
+      cursor: pointer;
+      transition: background 0.8s;
+    }
+
+    body.day {
+      background: #87CEEB;
+    }
+
+    /* ============================================
+       MOON
+    ============================================ */
+    .moon {
+      position: absolute;
+      top: 60px;
+      right: 120px;
+      width: 80px;
+      height: 80px;
+      background: #fffde7;
+      border-radius: 50%;
+      box-shadow: 0 0 30px 10px rgba(255, 253, 200, 0.4);
+      transition: opacity 0.8s;
+    }
+
+    body.day .moon {
+      opacity: 0;
+    }
+
+    /* ============================================
+       STARS
+       box-shadow starfield on a tiny div
+    ============================================ */
+    .stars {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1px;
+      height: 1px;
+      background: transparent;
+      box-shadow:
+        120px 40px 0 1px #fff, 250px 80px 0 1px #fff, 400px 30px 0 1px #fff,
+        550px 60px 0 1px #fff, 700px 20px 0 1px #fff, 850px 90px 0 1px #fff,
+        980px 50px 0 1px #fff, 60px 150px 0 1px #fff, 200px 130px 0 1px #fff,
+        370px 170px 0 1px #fff, 500px 110px 0 1px #fff, 640px 155px 0 1px #fff,
+        790px 140px 0 1px #fff, 900px 120px 0 1px #fff, 1050px 70px 0 1px #fff,
+        1150px 40px 0 1px #fff, 1250px 100px 0 1px #fff, 1350px 55px 0 1px #fff,
+        180px 200px 0 1px #ddd, 450px 220px 0 1px #ddd, 750px 210px 0 1px #ddd,
+        30px 280px 0 1px #ddd, 320px 260px 0 1px #ddd, 600px 290px 0 1px #ddd,
+        880px 270px 0 1px #ddd, 1100px 240px 0 1px #ddd;
+      transition: opacity 0.8s;
+    }
+
+    body.day .stars {
+      opacity: 0;
+    }
+
+    /* ============================================
+       HINT TEXT
+    ============================================ */
+    .hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.35);
+      font-family: sans-serif;
+      font-size: 13px;
+      letter-spacing: 1px;
+      pointer-events: none;
+      transition: color 0.8s;
+    }
+
+    body.day .hint {
+      color: rgba(0,0,0,0.25);
     }
 
     /* ============================================
@@ -59,23 +127,33 @@
     .bat {
       width: 1px;
       height: 1px;
+      position: absolute;
+      -webkit-animation: 0.4s bat steps(1) infinite, fly 12s linear infinite;
+              animation: 0.4s bat steps(1) infinite, fly 12s linear infinite;
+    }
 
-      /* Scale up 4x for chunky pixel-art look */
+    .bat:nth-child(1) {
+      top: 25vh;
+      animation-delay: 0s, 0s;
       transform: scale(4);
+    }
 
-      /* Needed for left/top offset to work */
-      position: relative;
+    .bat:nth-child(2) {
+      top: 45vh;
+      animation-delay: 0.1s, -5s;
+      transform: scale(3);
+      filter: brightness(1.4);
+    }
 
-      /* Re-center after scale(4) pushes it off */
-      left: -128px;
-      top: -128px;
+    .bat:nth-child(3) {
+      top: 15vh;
+      animation-delay: 0.2s, -9s;
+      transform: scale(2.5);
+    }
 
-      /* steps(1) = instant snap between frames, no easing
-         0.4s     = each frame lasts 0.2s (2 frames total)
-         bat      = references @keyframes bat below
-         infinite = loops forever                          */
-      -webkit-animation: 0.4s bat steps(1) infinite;
-              animation: 0.4s bat steps(1) infinite;
+    @keyframes fly {
+      0%   { left: -200px; }
+      100% { left: calc(100vw + 200px); }
     }
 
     /* ============================================
@@ -113,12 +191,20 @@
 </head>
 <body>
 
-  <!--
-    The entire bat is this single empty div.
-    No images, no canvas, no JavaScript.
-    Pure CSS box-shadow pixel art!
-  -->
+  <div class="stars"></div>
+  <div class="moon"></div>
+
   <div class="bat"></div>
+  <div class="bat"></div>
+  <div class="bat"></div>
+
+  <p class="hint">click to toggle day / night</p>
+
+  <script>
+    document.body.addEventListener('click', () => {
+      document.body.classList.toggle('day');
+    });
+  </script>
 
 </body>
 </html>
