@@ -1,17 +1,19 @@
 # Flying Bat Animation
 
-A pure CSS pixel art bat animation — no images, no canvas, no JavaScript.
+A pure CSS pixel art bat animation — no images, no canvas, no JavaScript frameworks.
 
 ## Demo
 
-Open `index.html` in any browser. Click anywhere to toggle day/night mode.
+Open `index.html` in any browser.
 
 ## Features
 
 - 6 bats flying right to left, scattered across the screen
-- Night sky with CSS starfield and glowing moon
-- Click to toggle day / night mode
-- All pure CSS — no JavaScript except the day/night toggle
+- Wavy sine-wave flight paths for natural movement
+- Night sky with full-screen CSS starfield and glowing moon
+- Day / night toggle button (top-right corner)
+- Smooth day sky gradient in day mode
+- All pure CSS — no JavaScript except the day/night toggle button
 
 ## How It Works
 
@@ -24,7 +26,8 @@ The entire bat is rendered using a **single 1×1px `<div>`** and CSS `box-shadow
 | `@keyframes bat` | Two frames swap the full shadow map to animate wing flaps |
 | `steps(1)` | Instant snap between frames — no easing, retro sprite-flip feel |
 | `@keyframes fly` | Moves bats from right to left across the screen |
-| `nth-child(3..8)` | Each bat gets its own size, position, and timing (offset by 2 for stars/moon divs) |
+| `@keyframes sineWave` | Oscillates `margin-top` for wavy flight path |
+| `nth-child(4..9)` | Each bat gets its own size, position, and timing (offset by 3 for stars/stars2/moon divs) |
 
 ### Animation Frames
 
@@ -49,6 +52,7 @@ No build steps, no dependencies — just open the file.
 | Property | Location | Effect |
 |---|---|---|
 | `background` on `body` | CSS | Change night sky color |
+| `background` on `body.day` | CSS | Change day sky gradient |
 | `#222` in `box-shadow` | `@keyframes bat` | Change bat color |
 | `transform: scale()` | `.bat:nth-child()` | Change individual bat size |
 | `0.4s` in `animation` | `.bat` | Change flap speed |
