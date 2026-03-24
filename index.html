@@ -624,30 +624,21 @@
     const scoreEl = document.getElementById('score');
 
     /* ================================================
-       DAY / NIGHT TOGGLE
-       Only fires when clicking directly on body,
-       NOT when clicking on a bat or other element.
+       CLICK EMPTY SPACE → toggle day / night
+       DOUBLE-CLICK EMPTY SPACE → spawn a bat
     ================================================ */
     document.body.addEventListener('click', (e) => {
-      // Only toggle if click target is body itself (empty sky)
       if (e.target === document.body) {
         document.body.classList.toggle('day');
       }
     });
 
-    /* ================================================
-       SPAWN BAT ON CLICK (empty sky)
-       When clicking empty space (body background),
-       also spawn a new bat at the clicked Y position.
-    ================================================ */
-    document.body.addEventListener('click', (e) => {
+    document.body.addEventListener('dblclick', (e) => {
       if (e.target !== document.body) return;
 
       const bat = document.createElement('div');
       bat.classList.add('bat');
 
-      // Place bat at the clicked Y, slightly offset so it
-      // appears to start at the right edge and fly left.
       const scale = (2 + Math.random() * 2.5).toFixed(2);
       const flyDuration = (8 + Math.random() * 8).toFixed(1);
       const waveDuration = (2 + Math.random() * 2).toFixed(1);
@@ -661,16 +652,11 @@
         flyDuration + 's fly linear 1, ' +
         waveDuration + 's sineWave ease-in-out ' + waveDelay + 's infinite';
 
-      // Remove spawned bat after one crossing
       bat.addEventListener('animationend', (ev) => {
-        if (ev.animationName === 'fly') {
-          bat.remove();
-        }
+        if (ev.animationName === 'fly') bat.remove();
       });
 
-      // Allow catching spawned bats too
       attachBatListeners(bat);
-
       document.body.appendChild(bat);
     });
 
