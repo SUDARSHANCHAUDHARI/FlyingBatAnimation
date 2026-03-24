@@ -647,7 +647,7 @@
   <button id="toggleBtn" title="Toggle day/night">🌙</button>
 
   <!-- Hint text (bottom-center) -->
-  <p class="hint">🌙 button to toggle day / night</p>
+  <p class="hint">click a bat to catch it &nbsp;·&nbsp; 🌙 button to toggle day / night</p>
 
   <script>
     /* ================================================
@@ -675,28 +675,31 @@
            bat speeds up via its animation-duration override
     ================================================ */
 
-    /**
-     * Attach click-to-catch and hover-flee listeners to a bat element.
-     * @param {HTMLElement} bat
-     */
-    function attachBatListeners(bat) {
-
-      /* --- Click to catch --- */
-      bat.addEventListener('click', (e) => {
-        e.stopPropagation(); // prevent body click (day/night toggle or spawn)
-        batsCaught++;
-        scoreEl.textContent = 'Bats Caught: ' + batsCaught;
-
-        // Flash the bat yellow
-        bat.classList.add('caught');
-        setTimeout(() => bat.classList.remove('caught'), 300);
-      });
-
-      /* --- Fleeing handled globally via mousemove, see below --- */
-    }
-
-    /* Attach listeners to all pre-existing bats */
-    document.querySelectorAll('.bat').forEach(attachBatListeners);
+    /* ================================================
+       CATCH BAT ON CLICK
+       Since box-shadow has no hit area, we listen on
+       body and check if the click is within any bat's
+       visual bounds (rect + padding for box-shadow).
+    ================================================ */
+    document.body.addEventListener('click', (e) => {
+      const bats = document.querySelectorAll('.bat');
+      for (const bat of bats) {
+        const rect = bat.getBoundingClientRect();
+        const pad = 100; // extra padding to cover box-shadow visual area
+        if (
+          e.clientX >= rect.left - pad &&
+          e.clientX <= rect.right  + pad &&
+          e.clientY >= rect.top  - pad &&
+          e.clientY <= rect.bottom + pad
+        ) {
+          batsCaught++;
+          scoreEl.textContent = 'Bats Caught: ' + batsCaught;
+          bat.classList.add('caught');
+          setTimeout(() => bat.classList.remove('caught'), 300);
+          break; // catch only one bat per click
+        }
+      }
+    });
 
     /* ================================================
        FLEE FROM MOUSE
