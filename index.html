@@ -647,7 +647,7 @@
   <button id="toggleBtn" title="Toggle day/night">🌙</button>
 
   <!-- Hint text (bottom-center) -->
-  <p class="hint">click sky to spawn bat &nbsp;·&nbsp; click bat to catch &nbsp;·&nbsp; 🌙 to toggle day/night</p>
+  <p class="hint">🌙 button to toggle day / night</p>
 
   <script>
     /* ================================================
@@ -666,34 +666,6 @@
       toggleBtn.textContent = document.body.classList.contains('day') ? '🌙' : '☀️';
     });
 
-    /* ================================================
-       CLICK EMPTY SKY → spawn a bat at that height
-    ================================================ */
-    document.body.addEventListener('click', (e) => {
-      if (e.target !== document.body) return;
-
-      const bat = document.createElement('div');
-      bat.classList.add('bat');
-
-      const scale = (2 + Math.random() * 2.5).toFixed(2);
-      const flyDuration = (8 + Math.random() * 8).toFixed(1);
-      const waveDuration = (2 + Math.random() * 2).toFixed(1);
-      const batDelay = (Math.random() * 0.3).toFixed(2);
-
-      bat.style.top = (e.clientY - 60) + 'px';
-      bat.style.transform = 'scale(' + scale + ')';
-      bat.style.animation =
-        batDelay + 's bat steps(1) infinite, ' +
-        flyDuration + 's fly linear 1, ' +
-        waveDuration + 's sineWave ease-in-out infinite';
-
-      bat.addEventListener('animationend', (ev) => {
-        if (ev.animationName === 'fly') bat.remove();
-      });
-
-      attachBatListeners(bat);
-      document.body.appendChild(bat);
-    });
 
     /* ================================================
        BAT INTERACTION: CATCH + FLEE
