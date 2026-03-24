@@ -134,229 +134,6 @@
 
     /* ============================================
        CLOUDS
-       3 CSS cloud shapes built from rounded divs
-       and box-shadow puffs, slowly drifting across.
-    ============================================ */
-    .cloud {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 50px;
-      /* Clouds drift right-to-left */
-      animation: cloudDrift linear infinite;
-      transition: opacity 0.8s;
-      pointer-events: none;
-    }
-
-    /* Puffs are pseudo-elements on each cloud */
-    .cloud::before,
-    .cloud::after {
-      content: '';
-      position: absolute;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-    }
-
-    .cloud:nth-child(1) {
-      width: 120px; height: 30px;
-      top: 12vh;
-      animation-duration: 80s;
-      animation-delay: -10s;
-    }
-    .cloud:nth-child(1)::before {
-      width: 70px; height: 50px;
-      top: -25px; left: 15px;
-    }
-    .cloud:nth-child(1)::after {
-      width: 50px; height: 40px;
-      top: -18px; left: 55px;
-    }
-
-    .cloud:nth-child(2) {
-      width: 100px; height: 25px;
-      top: 22vh;
-      animation-duration: 110s;
-      animation-delay: -40s;
-    }
-    .cloud:nth-child(2)::before {
-      width: 60px; height: 45px;
-      top: -22px; left: 12px;
-    }
-    .cloud:nth-child(2)::after {
-      width: 45px; height: 35px;
-      top: -14px; left: 48px;
-    }
-
-    .cloud:nth-child(3) {
-      width: 140px; height: 35px;
-      top: 8vh;
-      animation-duration: 95s;
-      animation-delay: -60s;
-    }
-    .cloud:nth-child(3)::before {
-      width: 80px; height: 55px;
-      top: -28px; left: 20px;
-    }
-    .cloud:nth-child(3)::after {
-      width: 55px; height: 42px;
-      top: -20px; left: 68px;
-    }
-
-    /* In day mode, clouds become white and more visible */
-    body.day .cloud,
-    body.day .cloud::before,
-    body.day .cloud::after {
-      background: rgba(255, 255, 255, 0.6);
-    }
-
-    @keyframes cloudDrift {
-      0%   { left: 110vw; }
-      100% { left: -300px; }
-    }
-
-    /* ============================================
-       CASTLE / TREELINE SILHOUETTE
-       Pure CSS box-shadow landscape at the bottom.
-       Uses a series of divs to form castle towers
-       and spiky tree outlines.
-    ============================================ */
-    .landscape {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 0;
-      pointer-events: none;
-      transition: opacity 0.8s;
-    }
-
-    /* The silhouette is drawn via box-shadow on .landscape::before.
-       Each shadow entry is a solid rectangle block that forms a tower,
-       battlement, or tree spike. All are dark near-black (#0d0d18). */
-    .landscape::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 1px;
-      height: 1px;
-      background: #0d0d18;
-      /* Castle towers + battlements + treeline silhouette */
-      box-shadow:
-        /* --- Left treeline --- */
-        0px    -60px  0 20px #0d0d18,
-        45px   -80px  0 15px #0d0d18,
-        80px   -55px  0 18px #0d0d18,
-        120px  -95px  0 12px #0d0d18,
-        155px  -65px  0 20px #0d0d18,
-        190px  -110px 0 10px #0d0d18,
-        220px  -75px  0 15px #0d0d18,
-        255px  -90px  0 12px #0d0d18,
-
-        /* --- Castle left wing --- */
-        300px  -120px 0 28px #0d0d18,
-        302px  -145px 0  6px #0d0d18,
-        320px  -150px 0  6px #0d0d18,
-        338px  -145px 0  6px #0d0d18,
-        356px  -150px 0  6px #0d0d18,
-        374px  -145px 0  6px #0d0d18,
-        /* left tower wall fill */
-        336px  -135px 0 20px #0d0d18,
-
-        /* --- Castle gate arch (center) --- */
-        450px  -180px 0 40px #0d0d18,
-        452px  -220px 0  8px #0d0d18,
-        476px  -228px 0  8px #0d0d18,
-        500px  -220px 0  8px #0d0d18,
-        524px  -228px 0  8px #0d0d18,
-        548px  -220px 0  8px #0d0d18,
-        /* tall center tower body */
-        490px  -200px 0 55px #0d0d18,
-
-        /* --- Castle right wing --- */
-        620px  -120px 0 28px #0d0d18,
-        622px  -145px 0  6px #0d0d18,
-        640px  -150px 0  6px #0d0d18,
-        658px  -145px 0  6px #0d0d18,
-        676px  -150px 0  6px #0d0d18,
-        694px  -145px 0  6px #0d0d18,
-        /* right tower wall fill */
-        656px  -135px 0 20px #0d0d18,
-
-        /* --- Right treeline --- */
-        740px  -90px  0 12px #0d0d18,
-        780px  -70px  0 18px #0d0d18,
-        820px  -100px 0 10px #0d0d18,
-        860px  -75px  0 16px #0d0d18,
-        900px  -85px  0 14px #0d0d18,
-        940px  -60px  0 20px #0d0d18,
-        980px  -95px  0 12px #0d0d18,
-        1020px -70px  0 18px #0d0d18,
-        1060px -55px  0 20px #0d0d18,
-        1100px -80px  0 15px #0d0d18,
-        1140px -65px  0 18px #0d0d18,
-        1180px -90px  0 12px #0d0d18,
-        1220px -70px  0 16px #0d0d18,
-        1260px -60px  0 20px #0d0d18,
-        1300px -85px  0 14px #0d0d18,
-        1340px -75px  0 17px #0d0d18,
-        1380px -55px  0 19px #0d0d18,
-        1420px -80px  0 13px #0d0d18,
-        1460px -65px  0 18px #0d0d18;
-    }
-
-    /* In day mode fade the silhouette to be a softer dark */
-    body.day .landscape::before {
-      background: #2a1a0a;
-      box-shadow:
-        0px    -60px  0 20px #2a2010,
-        45px   -80px  0 15px #2a2010,
-        80px   -55px  0 18px #2a2010,
-        120px  -95px  0 12px #2a2010,
-        155px  -65px  0 20px #2a2010,
-        190px  -110px 0 10px #2a2010,
-        220px  -75px  0 15px #2a2010,
-        255px  -90px  0 12px #2a2010,
-        300px  -120px 0 28px #2a2010,
-        302px  -145px 0  6px #2a2010,
-        320px  -150px 0  6px #2a2010,
-        338px  -145px 0  6px #2a2010,
-        356px  -150px 0  6px #2a2010,
-        374px  -145px 0  6px #2a2010,
-        336px  -135px 0 20px #2a2010,
-        450px  -180px 0 40px #2a2010,
-        452px  -220px 0  8px #2a2010,
-        476px  -228px 0  8px #2a2010,
-        500px  -220px 0  8px #2a2010,
-        524px  -228px 0  8px #2a2010,
-        548px  -220px 0  8px #2a2010,
-        490px  -200px 0 55px #2a2010,
-        620px  -120px 0 28px #2a2010,
-        622px  -145px 0  6px #2a2010,
-        640px  -150px 0  6px #2a2010,
-        658px  -145px 0  6px #2a2010,
-        676px  -150px 0  6px #2a2010,
-        694px  -145px 0  6px #2a2010,
-        656px  -135px 0 20px #2a2010,
-        740px  -90px  0 12px #2a2010,
-        780px  -70px  0 18px #2a2010,
-        820px  -100px 0 10px #2a2010,
-        860px  -75px  0 16px #2a2010,
-        900px  -85px  0 14px #2a2010,
-        940px  -60px  0 20px #2a2010,
-        980px  -95px  0 12px #2a2010,
-        1020px -70px  0 18px #2a2010,
-        1060px -55px  0 20px #2a2010,
-        1100px -80px  0 15px #2a2010,
-        1140px -65px  0 18px #2a2010,
-        1180px -90px  0 12px #2a2010,
-        1220px -70px  0 16px #2a2010,
-        1260px -60px  0 20px #2a2010,
-        1300px -85px  0 14px #2a2010,
-        1340px -75px  0 17px #2a2010,
-        1380px -55px  0 19px #2a2010,
-        1420px -80px  0 13px #2a2010,
-        1460px -65px  0 18px #2a2010;
-    }
 
     /* ============================================
        THE BAT
@@ -423,50 +200,43 @@
 
     /* ============================================
        NTH-CHILD BAT POSITIONS
-       Offset by the count of non-bat elements that
-       come before bats in the DOM:
-         1: .stars
-         2: .stars2
-         3: .moon
-         4: .cloud (1st)
-         5: .cloud (2nd)
-         6: .cloud (3rd)
-         7: .landscape
-         So bats start at nth-child(8)
+       3 non-bat elements precede bats in the DOM:
+         1: .stars, 2: .stars2, 3: .moon
+         So bats start at nth-child(4)
     ============================================ */
-    .bat:nth-child(8) {
+    .bat:nth-child(4) {
       top: 18vh;
       animation-delay: 0s, 0s, 0s;
       transform: scale(4);
     }
 
-    .bat:nth-child(9) {
+    .bat:nth-child(5) {
       top: 62vh;
       animation-delay: 0.1s, -4s, -0.8s;
       transform: scale(3);
       filter: brightness(1.4);
     }
 
-    .bat:nth-child(10) {
+    .bat:nth-child(6) {
       top: 35vh;
       animation-delay: 0.2s, -8s, -1.5s;
       transform: scale(2.5);
     }
 
-    .bat:nth-child(11) {
+    .bat:nth-child(7) {
       top: 75vh;
       animation-delay: 0.15s, -2s, -2.2s;
       transform: scale(3.5);
     }
 
-    .bat:nth-child(12) {
+    .bat:nth-child(8) {
       top: 48vh;
       animation-delay: 0.05s, -10s, -0.5s;
       transform: scale(2);
       filter: brightness(0.8);
     }
 
-    .bat:nth-child(13) {
+    .bat:nth-child(9) {
       top: 25vh;
       animation-delay: 0.3s, -6s, -1.0s;
       transform: scale(4.5);
@@ -595,19 +365,10 @@
   <!-- Moon: drifts slowly with candle-like flicker -->
   <div class="moon"></div>
 
-  <!-- Drifting clouds (3 shapes) -->
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-
-  <!-- Castle / treeline silhouette at bottom -->
-  <div class="landscape"></div>
-
   <!--
-    Static bats — nth-child(8) through nth-child(13)
-    because 7 non-bat elements precede them:
-      1: .stars, 2: .stars2, 3: .moon,
-      4-6: .cloud x3, 7: .landscape
+    Static bats — nth-child(4) through nth-child(9)
+    because 3 non-bat elements precede them:
+      1: .stars, 2: .stars2, 3: .moon
   -->
   <div class="bat"></div>
   <div class="bat"></div>
