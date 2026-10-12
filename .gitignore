@@ -9,3 +9,6 @@ graphify-out/
 !.env.example
 *.key
 secrets.json
+
+# local AI task notes
+CLAUDE_TASKS.md
